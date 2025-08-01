@@ -14,5 +14,4 @@ class MemoryRepository(TaskRepository):
         return self._tasks[task_id]
     
     def list_all(self) -> List[Task]:
-        import pdb; pdb.set_trace()
         return self._tasks

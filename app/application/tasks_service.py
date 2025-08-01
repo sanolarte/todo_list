@@ -22,23 +22,10 @@ class UpdateTaskService:
     def __init__(self, repository: TaskRepository):
         self.repository = repository
 
-    def run(self, task_id: UUID, title: str = None, description: str = None, priority: Priority = None, status: TaskStatus = None):
-        task = self.repository.get(task_id)
+    def run(self, task_id: UUID, data):
 
-        if title is not None:
-            task.title = title
-        if description is not None:
-            task.descripcion = description
-        if priority is not None:
-            task.priority = priority
-        if status is not None:
-            task.status = status
-            if status == TaskStatus.done:
-                task.completion_date = datetime.now()
-
-        self.repository.save(task)
-        return task
-
+        updated_task = self.repository.update(task_id, data)
+        return updated_task
 
 class ListTaskService:
     def __init__(self, repository: TaskRepository):
