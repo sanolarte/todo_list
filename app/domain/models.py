@@ -33,3 +33,6 @@ class TaskList(BaseModel):
     id: UUID = uuid4()
     name: str
     tasks: List[Task] = []
+    
+    class Config:
+        from_attributes=True

@@ -99,6 +99,9 @@ class TaskListDatabaseRepository(TaskListRepository):
         pass
     
     def list(self):
-        pass
+        with Session(self.engine) as session:
+            statement = select(TaskList)
+            lists = session.exec(statement)
+            return [TaskListModel.from_orm(list) for list in lists]
 
 
