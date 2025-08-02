@@ -23,6 +23,7 @@ class Task(BaseModel):
     prioridad: Priority = Priority.medium
     creation_date: datetime = datetime.now()
     completion_date: Optional[datetime] = None
+    task_list_id: Optional[UUID]
 
     class Config:
         from_attributes=True

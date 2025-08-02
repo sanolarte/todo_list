@@ -38,10 +38,13 @@ class TaskDatabaseRepository(TaskRepository):
         SQLModel.metadata.create_all(self.engine)
 
     def save(self, task: Task):
-        task_obj = Task(**task.dict())
+        task_obj_dict = task.dict()
+        task_obj_dict.pop("id", None)
+        task_obj = Task(**task_obj_dict)
         with Session(self.engine) as session:
             session.add(task_obj)
             session.commit()
+            session.refresh(task_obj)
     
 
     def update(self, task_id: UUID, data):

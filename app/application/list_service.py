@@ -1,6 +1,8 @@
-from uuid import uuid4
-from app.domain.models import TaskList
-from app.domain.ports import TaskListRepository
+from typing import List
+
+from uuid import uuid4, UUID
+from app.domain.models import TaskList, Task
+from app.domain.ports import TaskListRepository, TaskRepository
 
 
 class CreateListService:
@@ -20,3 +22,17 @@ class ListListService:
     def run(self) -> TaskList:
         lists = self.repository.list()
         return lists
+    
+
+class AddTaskToListService:
+    def __init__(self, repository: TaskListRepository, task_repository: TaskRepository):
+        self.repository = repository
+        self.task_repository = task_repository
+    
+    def run(self, task_list_id: UUID, tasks: List[dict]) -> TaskList:
+        new_tasks = []
+        for task in tasks:
+            new_task_dict = task.dict()
+            new_task = Task(**new_task_dict, task_list_id=task_list_id)
+            self.task_repository.save(new_task)
+            new_tasks.append(task)

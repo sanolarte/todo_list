@@ -1,9 +1,10 @@
+from uuid import UUID
 from typing import List
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
-from app.application.list_service import CreateListService, ListListService
-from app.adapters.outbound.database import TaskListDatabaseRepository
+from app.application.list_service import CreateListService, ListListService, AddTaskToListService
+from app.adapters.outbound.database import TaskListDatabaseRepository, TaskDatabaseRepository
 
 from app.domain.models import TaskList as TaskListModel
 
@@ -17,6 +18,9 @@ class CreateListInput(BaseModel):
     tasks: list[TaskCreationInput]
 
 
+class AddTasksToListInput(BaseModel):
+    tasks: list[TaskCreationInput]
+
 def get_create_list_service():
     repository = TaskListDatabaseRepository()
     return CreateListService(repository)
@@ -26,6 +30,11 @@ def get_list_list_service():
     repository = TaskListDatabaseRepository()
     return ListListService(repository)
 
+def get_add_task_to_list_service():
+    repository = TaskListDatabaseRepository()
+    task_repository = TaskDatabaseRepository()
+    return AddTaskToListService(repository, task_repository)
+
 @router.post("/", response_model=TaskListModel)
 def create_list(data: CreateListInput, service: CreateListService = Depends(get_create_list_service)):
     return service.run(data)
@@ -34,3 +43,8 @@ def create_list(data: CreateListInput, service: CreateListService = Depends(get_
 @router.get("/", response_model=List[TaskListModel])
 def list_all_lists(service: ListListService = Depends(get_list_list_service)):
     return service.run()
+
+
+@router.patch("/{list_id}")
+def add_task_to_list(list_id: UUID, data: AddTasksToListInput, service: ListListService = Depends(get_add_task_to_list_service)):
+    return service.run(list_id, data.tasks)
