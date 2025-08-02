@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from app.application.tasks_service import CreateTaskService, UpdateTaskService, ListTaskService
 from app.adapters.outbound.memory import MemoryRepository
-from app.adapters.outbound.database import DatabaseRepository
+from app.adapters.outbound.database import TaskDatabaseRepository
 from app.domain.models import Task, Priority, TaskStatus
 
 router = APIRouter()
@@ -21,15 +21,15 @@ class UpdateTaskInput(BaseModel):
     status: TaskStatus | None = None
 
 def get_create_task_service():
-    repository = DatabaseRepository()
+    repository = TaskDatabaseRepository()
     return CreateTaskService(repository)
 
 def get_update_task_service():
-    repository = DatabaseRepository()
+    repository = TaskDatabaseRepository()
     return UpdateTaskService(repository)
 
 def get_list_task_service():
-    repository = DatabaseRepository()
+    repository = TaskDatabaseRepository()
     return ListTaskService(repository)
 
 @router.post("/", response_model=Task)

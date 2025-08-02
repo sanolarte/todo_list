@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional
+from typing import Optional, List
 from uuid import UUID, uuid4
 from datetime import datetime
 from pydantic import BaseModel
@@ -27,3 +27,9 @@ class Task(BaseModel):
     class Config:
         from_attributes=True
         orm_mode = True
+
+
+class TaskList(BaseModel):
+    id: UUID = uuid4()
+    name: str
+    tasks: List[Task] = []
